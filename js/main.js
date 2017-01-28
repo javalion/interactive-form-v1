@@ -6,6 +6,7 @@ function initialize() {
   setupDynamicFields();
   // Setup Event Handlers
   setupEventHandlers();
+
 }
 
 function setupDynamicFields() {
@@ -13,10 +14,17 @@ function setupDynamicFields() {
 	var $otherJobRole = $('<label for="other-title">Other:</label> <input type="text" id="other-title" placeholder="Your Job Role">');
 	$otherJobRole.hide();
 	$('#title').after($otherJobRole);
+	
+	// Setup Activities Total Field
+	var $totalDiv = $('<div id="totalDiv">Your Total: <span id="activitiesTotal"></span></div>');
+	$totalDiv.hide();
+	$('.activities').after($totalDiv);
 }
 
 function setupEventHandlers() {
 	$('#title').on('change',handleJobRoleChange);
+	$('#design').on('change',handleThemeChange);
+	$('.activities input[type="checkbox"]').on('change',handleActivityChange);
 }
 
 // ***************** Event Handlers ***********************
@@ -27,6 +35,72 @@ function handleJobRoleChange(){
 	} else {
 	   // Hide Other Job Role Field
 		$('#other-title').hide();
+	}
+}
+
+function handleThemeChange() {
+	$('#color option').hide();
+	if (this.value === 'js puns') {
+		$("#color option[value='cornflowerblue']").show();
+		$("#color option[value='darkslategrey']").show();		
+		$("#color option[value='gold']").show();	
+		$("#color").val("cornflowerblue");
+	} else {
+		$("#color option[value='tomato']").show();			
+		$("#color option[value='steelblue']").show();		
+		$("#color option[value='dimgrey']").show();	
+		$("#color").val("tomato");
+	}
+}
+
+function handleActivityChange() {
+	var total = 0;
+	if ($('.activities input[name="all"]').is(":checked")) {
+		total += 200;
+	}
+
+	if ($('.activities input[name="js-frameworks"]').is(":checked")) {
+		total += 100;
+		$('.activities input[name="express"]').prop("disabled", true);
+	} else {
+		$('.activities input[name="express"]').prop("disabled", false);
+	}
+	
+	if ($('.activities input[name="js-libs"]').is(":checked")) {
+		total += 100;
+		$('.activities input[name="node"]').prop("disabled", true);
+	} else {
+		$('.activities input[name="node"]').prop("disabled", false);
+	}
+	
+	if ($('.activities input[name="express"]').is(":checked")) {
+		total += 100;
+		$('.activities input[name="js-frameworks"]').prop("disabled", true);
+	} else {
+		$('.activities input[name="js-frameworks"]').prop("disabled", false);
+	}
+	
+	if ($('.activities input[name="node"]').is(":checked")) {
+		total += 100;
+		$('.activities input[name="js-libs"]').prop("disabled", true);
+	} else {
+		$('.activities input[name="js-libs"]').prop("disabled", false);
+	}
+	
+	if ($('.activities input[name="build-tools"]').is(":checked")) {
+		total += 100;
+	}
+	
+	if ($('.activities input[name="npm"]').is(":checked")) {
+		total += 100;
+	}
+	
+	if (total > 0) {
+		$('#activitiesTotal').html("$" + total);
+		$('#totalDiv').show();
+	}
+	else {
+		$('#totalDiv').hide();
 	}
 }
 
