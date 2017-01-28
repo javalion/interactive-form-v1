@@ -6,7 +6,9 @@ function initialize() {
   setupDynamicFields();
   // Setup Event Handlers
   setupEventHandlers();
-
+  // Only Display One Payment Option
+  $("#payment").val('credit card');
+  handlePaymentChange();
 }
 
 function setupDynamicFields() {
@@ -25,6 +27,7 @@ function setupEventHandlers() {
 	$('#title').on('change',handleJobRoleChange);
 	$('#design').on('change',handleThemeChange);
 	$('.activities input[type="checkbox"]').on('change',handleActivityChange);
+	$('#payment').on('change',handlePaymentChange);
 }
 
 // ***************** Event Handlers ***********************
@@ -101,6 +104,23 @@ function handleActivityChange() {
 	}
 	else {
 		$('#totalDiv').hide();
+	}
+}
+
+function handlePaymentChange() {
+	var paymentType = $("#payment").val();
+	if (paymentType === "credit card") {
+		$("#paypal").hide();
+		$("#bitcoin").hide();
+		$("#credit-card").show();
+	} else if (paymentType === "paypal") {
+		$("#paypal").show();
+		$("#bitcoin").hide();
+		$("#credit-card").hide();
+	} else if (paymentType === "bitcoin") {
+		$("#paypal").hide();
+		$("#bitcoin").show();
+		$("#credit-card").hide();
 	}
 }
 
