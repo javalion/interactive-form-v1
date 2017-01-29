@@ -8,6 +8,8 @@ function initialize() {
   setupEventHandlers();
   // Only Display One Payment Option
   $("#payment").val('credit card');
+  // Hide color control until a theme is selected.
+  $("#colors-js-puns").hide();
   handlePaymentChange();
 }
 
@@ -49,11 +51,15 @@ function handleThemeChange() {
 		$("#color option[value='darkslategrey']").show();		
 		$("#color option[value='gold']").show();	
 		$("#color").val("cornflowerblue");
-	} else {
+		$("#colors-js-puns").show();
+	} else if (this.value === 'heart js') {
 		$("#color option[value='tomato']").show();			
 		$("#color option[value='steelblue']").show();		
 		$("#color option[value='dimgrey']").show();	
 		$("#color").val("tomato");
+		$("#colors-js-puns").show();
+	} else {
+		$("#colors-js-puns").hide();
 	}
 }
 
@@ -131,41 +137,53 @@ function handleSubmit(evt) {
 	// Check Name
 	var name = $('#name').val().trim();
 	if (name.length === 0) {
-		alert("Name is required");
+		$('#name').focus();
+		$('#name').addClass("error");
 		error = true;
-	} 
+	} else {
+		$('#name').removeClass("error");
+	}
 	
 	// Check EMail
 	var email = $('#mail').val().trim();
     if (!/^[\w._]+@[\w]+\.[\w]+/.test(email)){
-		alert("A valid email is required");
+		$('#mail').addClass("error");
 		error = true;
+	} else {
+		$('#mail').removeClass("error");
 	}
 	
 	// Check Activities
 	if ($(".activities input[type='checkbox']:checked").length === 0) {
-		alert("Atleast 1 activity must be selected");
+		$(".activities").addClass("error");
 		error = true;
+	} else {
+		$(".activities").removeClass("error");
 	}
 	
 	// Check Credit Card
 	if ($("#payment").val() === "credit card") {
 		if(!/[0-9]{13,16}/.test($("#cc-num").val())) {
-		  alert("Invalid Credit Card #");
+          $("#cc-num").addClass("error");
 		  error = true;   
+		} else {
+			$("#cc-num").removeClass("error");
 		}
 		if (!/[0-9]{5}/.test($("#zip").val())){
-			alert("Invalid Zip Code");
+			$("#zip").addClass("error");
 			error = true;
+		} else {
+			$("#zip").removeClass("error");
 		}
 		
 		if (!/[0-9]{3}/.test($("#cvv").val())) {
-			alert("Invalid Security Code");
+            $("#cvv").addClass("error");
 			error = true;
+		} else {
+			$("#cvv").removeClass("error");
 		}
 	}
 		
-	
 	if (error){
 		evt.preventDefault();
 	}
