@@ -8,8 +8,12 @@ function initialize() {
   setupEventHandlers();
   // Only Display One Payment Option
   $("#payment").val('credit card');
-  // Hide color control until a theme is selected.
+  // Hide color control until a theme is selected
   $("#colors-js-puns").hide();
+  // Add hints to page
+  setupHints();
+	
+  // Fire the payment change to show only default payment section
   handlePaymentChange();
 }
 
@@ -31,6 +35,48 @@ function setupEventHandlers() {
 	$('.activities input[type="checkbox"]').on('change',handleActivityChange);
 	$('#payment').on('change',handlePaymentChange);
 	$('button[type="submit"]').on('click',handleSubmit);
+}
+
+function setupHints() {
+	var $nameHint = $('<span id="nameHint" class="hint">A name is required</span>');
+	$nameHint.hide();
+	$("input#name").after($nameHint);
+	
+	var $emailHint1 = $('<span id="emailRequiredHint" class="hint">An email is required</span>');
+	$emailHint1.hide();
+	$("input#mail").after($emailHint1);
+	var $emailHint2 = $('<span id="emailValidHint" class="hint">Email must be valid</span>');
+	$emailHint2.hide();
+	$("input#mail").after($emailHint2);
+
+	var $activitiesHint = $('<span id="activitiesHint" class="hint">Atleast one activity must be selected</span>');
+	$activitiesHint.hide();
+	$(".activities label:last-child").after($activitiesHint);
+
+	var ccRequiredHint = $('<span id="ccRequiredHint" class="hint">CC # is required</span>');
+	ccRequiredHint.hide();
+	$("#cc-num").after(ccRequiredHint);
+	
+	var ccValidHint = $('<span id="ccValidHint" class="hint">CC # must be valid</span>');
+	ccValidHint.hide();
+	$("#cc-num").after(ccValidHint);
+	
+	var zipRequiredHint = $('<span id="zipRequiredHint" class="hint">Zip is required</span>');
+	zipRequiredHint.hide();
+	$("#zip").after(zipRequiredHint);
+	
+	var zipValidHint = $('<span id="zipValidHint" class="hint">Zip must be valid</span>');
+	zipValidHint.hide();
+	$("#zip").after(zipValidHint);
+
+	var cvvRequiredHint = $('<span id="cvvRequiredHint" class="hint">CVV is required</span>');
+	cvvRequiredHint.hide();
+	$("#cvv").after(cvvRequiredHint);
+
+	var cvvValidHint = $('<span id="cvvValidHint" class="hint">CVV must be valid</span>');
+	cvvValidHint.hide();
+	$("#cvv").after(cvvValidHint);
+	
 }
 
 // ***************** Event Handlers ***********************
@@ -139,47 +185,89 @@ function handleSubmit(evt) {
 	if (name.length === 0) {
 		$('#name').focus();
 		$('#name').addClass("error");
+		$('#nameHint').show();
 		error = true;
 	} else {
+		$('#nameHint').hide();
 		$('#name').removeClass("error");
 	}
 	
 	// Check EMail
 	var email = $('#mail').val().trim();
-    if (!/^[\w._]+@[\w]+\.[\w]+/.test(email)){
+	if (email.length === 0){
 		$('#mail').addClass("error");
+		$('#emailRequiredHint').show();
+		$('#emailValidHint').hide();	
+		error = true;		
+	} else if (!/^[\w._]+@[\w]+\.[\w]+/.test(email)){
+		$('#mail').addClass("error");
+		$('#emailRequiredHint').hide();
+		$('#emailValidHint').show();	
 		error = true;
 	} else {
 		$('#mail').removeClass("error");
+		$('#emailRequiredHint').hide();
+		$('#emailValidHint').hide();	
+
 	}
 	
 	// Check Activities
 	if ($(".activities input[type='checkbox']:checked").length === 0) {
 		$(".activities").addClass("error");
+		$("#activitiesHint").show();
 		error = true;
 	} else {
 		$(".activities").removeClass("error");
+		$("#activitiesHint").hide();
 	}
 	
 	// Check Credit Card
 	if ($("#payment").val() === "credit card") {
-		if(!/[0-9]{13,16}/.test($("#cc-num").val())) {
+		if($("#cc-num").val().length === 0) {
           $("#cc-num").addClass("error");
+		  $("#ccRequiredHint").show();
+		  $("#ccValidHint").hide();			
+		  error = true;
+		} else if(!/[0-9]{13,16}/.test($("#cc-num").val())) {
+          $("#cc-num").addClass("error");
+		  $("#ccRequiredHint").hide();		
+		  $("#ccValidHint").show();						
 		  error = true;   
 		} else {
-			$("#cc-num").removeClass("error");
+		  $("#cc-num").removeClass("error");
+		  $("#ccRequiredHint").hide();	
+		  $("#ccValidHint").hide();						
 		}
-		if (!/[0-9]{5}/.test($("#zip").val())){
+		
+		
+		if ($("#zip").val().length === 0){
+			$("#zipRequiredHint").show();
+			$("#zipValidHint").hide();			
+			$("#zip").addClass("error");
+			error = true;
+		} else if (!/[0-9]{5}/.test($("#zip").val())){
+			$("#zipRequiredHint").hide();
+			$("#zipValidHint").show();			
 			$("#zip").addClass("error");
 			error = true;
 		} else {
+			$("#zipRequiredHint").hide();
+			$("#zipValidHint").show();			
 			$("#zip").removeClass("error");
 		}
 		
-		if (!/[0-9]{3}/.test($("#cvv").val())) {
+		if ($("#cvv").val().length === 0) {
+			$("#cvv").addClass("error");
+			$("#cvvRequiredHint").show();
+			$("#cvvValidHint").hide();			
+		} else if (!/[0-9]{3}/.test($("#cvv").val())) {
             $("#cvv").addClass("error");
+			$("#cvvRequiredHint").hide();	
+			$("#cvvValidHint").show();			
 			error = true;
 		} else {
+			$("#cvvRequiredHint").hide();
+			$("#cvvValidHint").hide();			
 			$("#cvv").removeClass("error");
 		}
 	}
