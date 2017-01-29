@@ -28,6 +28,7 @@ function setupEventHandlers() {
 	$('#design').on('change',handleThemeChange);
 	$('.activities input[type="checkbox"]').on('change',handleActivityChange);
 	$('#payment').on('change',handlePaymentChange);
+	$('button[type="submit"]').on('click',handleSubmit);
 }
 
 // ***************** Event Handlers ***********************
@@ -121,6 +122,52 @@ function handlePaymentChange() {
 		$("#paypal").hide();
 		$("#bitcoin").show();
 		$("#credit-card").hide();
+	}
+}
+
+function handleSubmit(evt) {
+	var error = false;
+	
+	// Check Name
+	var name = $('#name').val().trim();
+	if (name.length === 0) {
+		alert("Name is required");
+		error = true;
+	} 
+	
+	// Check EMail
+	var email = $('#mail').val().trim();
+    if (!/^[\w._]+@[\w]+\.[\w]+/.test(email)){
+		alert("A valid email is required");
+		error = true;
+	}
+	
+	// Check Activities
+	if ($(".activities input[type='checkbox']:checked").length === 0) {
+		alert("Atleast 1 activity must be selected");
+		error = true;
+	}
+	
+	// Check Credit Card
+	if ($("#payment").val() === "credit card") {
+		if(!/[0-9]{13,16}/.test($("#cc-num").val())) {
+		  alert("Invalid Credit Card #");
+		  error = true;   
+		}
+		if (!/[0-9]{5}/.test($("#zip").val())){
+			alert("Invalid Zip Code");
+			error = true;
+		}
+		
+		if (!/[0-9]{3}/.test($("#cvv").val())) {
+			alert("Invalid Security Code");
+			error = true;
+		}
+	}
+		
+	
+	if (error){
+		evt.preventDefault();
 	}
 }
 
