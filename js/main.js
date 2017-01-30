@@ -30,6 +30,7 @@ function setupDynamicFields() {
 }
 
 function setupEventHandlers() {
+	$('#mail').on('keyup', validateEmail);
 	$('#title').on('change',handleJobRoleChange);
 	$('#design').on('change',handleThemeChange);
 	$('.activities input[type="checkbox"]').on('change',handleActivityChange);
@@ -38,45 +39,23 @@ function setupEventHandlers() {
 }
 
 function setupHints() {
-	var $nameHint = $('<span id="nameHint" class="hint">A name is required</span>');
-	$nameHint.hide();
-	$("input#name").after($nameHint);
-	
-	var $emailHint1 = $('<span id="emailRequiredHint" class="hint">An email is required</span>');
-	$emailHint1.hide();
-	$("input#mail").after($emailHint1);
-	var $emailHint2 = $('<span id="emailValidHint" class="hint">Email must be valid</span>');
-	$emailHint2.hide();
-	$("input#mail").after($emailHint2);
+	setupHint("nameHint", "Name is required", "input#name");
+	setupHint("emailRequiredHint", "Email is required", "#mail");
+	setupHint("emailValidHint","Email must be valid", "#mail");
+	setupHint("activitiesHint","1 activity must be selected", ".activities label:last-child");
+    setupHint("ccRequiredHint","CC # is required", "#cc-num");
+	setupHint("ccValidHint", "CC # must be valid", "#cc-num");
+    setupHint("zipRequiredHint", "Zip is required", "#zip");	
+	setupHint("zipValidHint", "Zip must be valid", "#zip");
+	setupHint("cvvRequiredHint", "CVV is required", "#cvv");
+	setupHint("cvvValidHint", "CVV must be valid", "#cvv");
+}
 
-	var $activitiesHint = $('<span id="activitiesHint" class="hint">Atleast one activity must be selected</span>');
-	$activitiesHint.hide();
-	$(".activities label:last-child").after($activitiesHint);
+function setupHint(id, description, target) {
+	var $hint = $('<span id="' + id + '" class="hint">' + description + '</span>');
+	$hint.hide();
+	$(target).after($hint);
 
-	var ccRequiredHint = $('<span id="ccRequiredHint" class="hint">CC # is required</span>');
-	ccRequiredHint.hide();
-	$("#cc-num").after(ccRequiredHint);
-	
-	var ccValidHint = $('<span id="ccValidHint" class="hint">CC # must be valid</span>');
-	ccValidHint.hide();
-	$("#cc-num").after(ccValidHint);
-	
-	var zipRequiredHint = $('<span id="zipRequiredHint" class="hint">Zip is required</span>');
-	zipRequiredHint.hide();
-	$("#zip").after(zipRequiredHint);
-	
-	var zipValidHint = $('<span id="zipValidHint" class="hint">Zip must be valid</span>');
-	zipValidHint.hide();
-	$("#zip").after(zipValidHint);
-
-	var cvvRequiredHint = $('<span id="cvvRequiredHint" class="hint">CVV is required</span>');
-	cvvRequiredHint.hide();
-	$("#cvv").after(cvvRequiredHint);
-
-	var cvvValidHint = $('<span id="cvvValidHint" class="hint">CVV must be valid</span>');
-	cvvValidHint.hide();
-	$("#cvv").after(cvvValidHint);
-	
 }
 
 // ***************** Event Handlers ***********************
@@ -193,24 +172,7 @@ function handleSubmit(evt) {
 	}
 	
 	// Check EMail
-	var email = $('#mail').val().trim();
-	if (email.length === 0){
-		$('#mail').addClass("error");
-		$('#emailRequiredHint').show();
-		$('#emailValidHint').hide();	
-		error = true;		
-	} else if (!/^[\w._]+@[\w]+\.[\w]+/.test(email)){
-		$('#mail').addClass("error");
-		$('#emailRequiredHint').hide();
-		$('#emailValidHint').show();	
-		error = true;
-	} else {
-		$('#mail').removeClass("error");
-		$('#emailRequiredHint').hide();
-		$('#emailValidHint').hide();	
-
-	}
-	
+    validateEmail(true);	
 	// Check Activities
 	if ($(".activities input[type='checkbox']:checked").length === 0) {
 		$(".activities").addClass("error");
@@ -228,7 +190,7 @@ function handleSubmit(evt) {
 		  $("#ccRequiredHint").show();
 		  $("#ccValidHint").hide();			
 		  error = true;
-		} else if(!/[0-9]{13,16}/.test($("#cc-num").val())) {
+		} else if(!/[0-9]{16}/.test($("#cc-num").val())) {
           $("#cc-num").addClass("error");
 		  $("#ccRequiredHint").hide();		
 		  $("#ccValidHint").show();						
@@ -252,7 +214,7 @@ function handleSubmit(evt) {
 			error = true;
 		} else {
 			$("#zipRequiredHint").hide();
-			$("#zipValidHint").show();			
+			$("#zipValidHint").hide();			
 			$("#zip").removeClass("error");
 		}
 		
@@ -275,6 +237,27 @@ function handleSubmit(evt) {
 	if (error){
 		evt.preventDefault();
 	}
+}
+
+function validateEmail(){
+	var error = false;
+		var email = $('#mail').val().trim();
+	if (email.length === 0){
+ 		 $('#mail').addClass("error");
+		 $('#emailRequiredHint').show();
+		 $('#emailValidHint').hide();	
+		 error = true;		
+	} else if (!/^[\w._]+@[\w]+\.[\w]+/.test(email)){
+		$('#mail').addClass("error");
+		$('#emailRequiredHint').hide();
+		$('#emailValidHint').show();	
+		error = true;
+	} else {
+		$('#mail').removeClass("error");
+		$('#emailRequiredHint').hide();
+		$('#emailValidHint').hide();	
+	}
+	return error;
 }
 
 initialize();
